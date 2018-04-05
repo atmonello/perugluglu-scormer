@@ -49,7 +49,7 @@ function initCourse() {
     else {
         alert('Could not connect to the LMS!');
     }
-
+    counter = data.totalClicks;
     init();
 }
 
@@ -64,7 +64,7 @@ function setComplete() {
 function saveSuspendData() {
     // Data stored in data.js has to be JSON.stringify-ed and stored into dataToString 
     // and then setSuspendData stores it into SCORM suspend_data
-
+    dataToString = JSON.stringify(data);
     setSuspendData = scorm.set('cmi.suspend_data', dataToString);
 }
 
@@ -75,7 +75,7 @@ function loadSuspendData() {
         parseData = JSON.parse(getSuspendData);
         // Data parsed by parseData has to be stored back into data.js and
         // then it can be used by the script
-
+        data = parseData;
     }
 }
 

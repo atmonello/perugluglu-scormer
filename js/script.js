@@ -10,9 +10,21 @@
 ** https://github.com/pipwerks/scorm-api-wrapper 
 */
 
+var counter; // Used to track user clicks
 
-scormInit();
+$(document).ready(function(){
+    scormInit();
+});
+
 
 function init() {
+    // Sets counter text
+    $('.counter p').html('Total: ' + counter)
 
+    // Controls click on the button
+    $(document).on('click','.button', function(){
+        counter++;
+        data.totalClicks = counter;
+        $('.counter p').html('Total: ' + counter)
+    });
 }

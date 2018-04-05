@@ -1,0 +1,59 @@
+/*
+**  Perugluglu SCORMer
+**  Author: Andre Monello @ Perugluglu Interactive @ Sao Paulo, Brasil
+**
+**  This can be used to integrate SCORM into your HTML5 games, 
+**  along with the HTML, JS and any other files. Project can be
+**  imported to SCORM Cloud platform.
+**
+**  It uses Pipwerks SCORM Wrapper for JavaScript
+**  https://github.com/pipwerks/scorm-api-wrapper
+*/
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+.counter {
+    position: absolute;
+    margin: auto;
+    top: -100px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: antiquewhite;
+    width: 150px;
+    height: 150px;
+    border: sandybrown 3px solid
+}
+
+.counter p {
+    padding-top: 30px;
+    text-align: center;
+    font-size: 1.5em;
+    color: crimson;
+}
+
+.button {
+    position: absolute;
+    margin: auto;
+    top: 50px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: saddlebrown;
+    width: 100px;
+    height: 50px;
+    border: darkred 2px solid;
+    cursor: pointer !important;
+    transition: all 0.2s
+}
+
+.button:active {
+    transform: scale(0.95);
+}
+
+.button p {
+    text-align: center;
+    font-size: 100%;
+    color: antiquewhite;
+}
