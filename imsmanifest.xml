@@ -15,11 +15,11 @@
     <schema>ADL SCORM</schema>
     <schemaversion>1.2</schemaversion>
   </metadata>
-  <organizations default="Instituto Singularidades">
-    <organization identifier="singularidades">
-      <title>Instituto Singularidades - Psicogenese</title>
+  <organizations default="Perugluglu Interactive">
+    <organization identifier="perugluglu">
+      <title>Perugluglu - SCORM 1.2 Wrapper</title>
         <item identifier="i1" identifierref="r1" isvisible="true">
-        <title>Psicogenese</title>
+        <title>SCORM 1.2 Wrapper</title>
       </item>
     </organization>
   </organizations>
