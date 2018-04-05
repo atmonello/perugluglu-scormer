@@ -1,0 +1,5 @@
+scormInit();
+
+function init() {
+
+}
