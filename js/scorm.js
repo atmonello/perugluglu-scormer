@@ -11,101 +11,118 @@
 */
 
 
-var scorm = pipwerks.SCORM; // Used to access Pipwerks SCORM Wrapper
-var lmsConnected = false; // Checks if coonected to the LMS
-var lessonStatus; // Stores course status (from LMS)
-var studentName; // Stores student name (from LMS)
-var unloaded = false; // Used when checking if window is being closed
-var scormEntry; // Stores if it's a user's first time accessing the course
-var dataToString; // Receives data to be stringfied before sending to SCORM suspend_data
-var setSuspendData; // Receives stringfied data and saves it into SCORM suspend_data
-var getSuspendData; // Receives SCORM suspend_data. It has to be parsed BEFORE being used by the script!
-var parseData; // Used to store parsed data received from SCORM suspend_data
+var scormVars = {
 
-// Initializes SCORM course
-function scormInit () {
-    initCourse();
+    scorm: pipwerks.SCORM,  // Used to access Pipwerks SCORM Wrapper
+    lmsConnected: false,  // Checks if coonected to the LMS
+    lessonStatus: null,  // Stores course status (from LMS)
+    studentName: '',  // Stores student name (from LMS)
+    unloaded: false,  // Used when checking if window is being closed
+    scormEntry: null,  // Stores if it's a user's first time accessing the course
+    dataToString: null,  // Receives data to be stringfied before sending to SCORM suspend_data
+    setSuspendData: null,  // Receives stringfied data and saves it into SCORM suspend_data
+    getSuspendData: null,  // Receives SCORM suspend_data. It has to be parsed BEFORE being used by the script!
+    parseData: null,  // Used to store parsed data received from SCORM suspend_data
+
 }
 
-// Initializes course main functions
-function initCourse() {
-    lmsConnected = scorm.init();
-    lessonStatus = scorm.get('cmi.core.lesson_status');
-    scormEntry = scorm.get('cmi.core.entry');
 
-    if (lmsConnected) {
-        getStudentName();
-        if (lessonStatus === 'completed' || lessonStatus === 'passed') {
-            alert('You have already finished this lesson. \nYou do not have to do it again.');
-        }
-        
-        else {
-            if (scormEntry !== 'ab-initio') {
-                loadSuspendData();
+var scormFunctions = {
+    // Initializes SCORM course
+    scormInit() {
+        scormFunctions.initCourse();
+    },
+    
+    // Initializes course main functions
+    initCourse() {
+        scormVars.lmsConnected = scormVars.scorm.init();
+        scormVars.lessonStatus = scormVars.scorm.get('cmi.core.lesson_status');
+        scormVars.scormEntry = scormVars.scorm.get('cmi.core.entry');
+    
+        if (scormVars.lmsConnected) {
+            scormFunctions.getStudentName();
+
+            if (scormVars.lessonStatus === 'completed' || scormVars.lessonStatus === 'passed') {
+                alert('You have already finished this lesson. \nYou do not have to do it again.');
+            }
+            
+            else {
+                scormFunctions.setWelcomeMessage();
+
+                if (scormVars.scormEntry !== 'ab-initio') {
+                    scormFunctions.loadSuspendData();
+                }
             }
         }
-    }
+    
+        else {
+            alert('Could not connect to the LMS!');
+        }
 
-    else {
-        alert('Could not connect to the LMS!');
-    }
-    counter = data.totalClicks;
-    init();
-}
+        init();
+    },
+    
+    // Sets course completion status to completed
+    setComplete() {
+        if (scormVars.lmsConnected) {
+           scormVars.scorm.set('cmi.core.lesson_status', 'completed');
+        }
+    },
+    
+    // Saves data to SCORM suspend_data
+    saveSuspendData() {
+        // Data stored in data.js has to be JSON.stringify-ed and stored into dataToString 
+        // and then setSuspendData stores it into SCORM suspend_data
+        scormVars.dataToString = JSON.stringify(data);
+        scormVars.setSuspendData = scormVars.scorm.set('cmi.suspend_data', scormVars.dataToString);
+    },
+    
+    // Loads data from SCORM suspend_data
+    loadSuspendData() {
+        scormVars.getSuspendData = scormVars.scorm.get('cmi.suspend_data');
+        if(scormVars.getSuspendData !== '') {
+            scormVars.parseData = JSON.parse(scormVars.getSuspendData);
+            // Data parsed by parseData has to be stored back into data.js and
+            // then it can be used by the script
+            data = scormVars.parseData;
+        }
+    },
+    
+    // Receives student_name from LMS, divides it into an array of strings and reverses it
+    // to be used throughout the project
+    getStudentName() {
+        scormVars.studentName = scormVars.scorm.get('cmi.core.student_name').split(',').reverse().join(' ');
+    },
+    
+    // It sets an welcome message using student's name received
+    // Mainly used in Perugluglu's own projects but left here for future reference
+    setWelcomeMessage() {
+        // If it's an user's first time accessing the course...
+        if(scormVars.scormEntry === 'ab-initio') {
+            alert('Welcome' + scormVars.studentName + '! Click to 50 to complete.\nIf you exit and come back, your progress will be saved.');
+        } 
+        // ...and if it isn't
+        else {
+            alert('Welcome back' + scormVars.studentName + '!');
+        }
+    },
+    
+    // Saves current course status
+    unloadHandler() {
+        if(!scormVars.unloaded) {
+            scormFunctions.saveSuspendData();
+            scormVars.scorm.save();
+            scormVars.scorm.quit();
+            scormVars.unloaded = true;
+        }
+    },
 
-// Sets course completion status to completed
-function setComplete() {
-    if (lmsConnected) {
-        scorm.set('cmi.core.lesson_status', 'completed');
-    }
-}
-
-// Saves data to SCORM suspend_data
-function saveSuspendData() {
-    // Data stored in data.js has to be JSON.stringify-ed and stored into dataToString 
-    // and then setSuspendData stores it into SCORM suspend_data
-    dataToString = JSON.stringify(data);
-    setSuspendData = scorm.set('cmi.suspend_data', dataToString);
-}
-
-// Loads data from SCORM suspend_data
-function loadSuspendData() {
-    getSuspendData = scorm.get('cmi.suspend_data');
-    if(getSuspendData !== '') {
-        parseData = JSON.parse(getSuspendData);
-        // Data parsed by parseData has to be stored back into data.js and
-        // then it can be used by the script
-        data = parseData;
-    }
-}
-
-// Receives student_name from LMS, divides it into an array of strings and reverses it
-// to be used throughout the project
-function getStudentName() {
-    studentName = scorm.get('cmi.core.student_name').split(',').reverse();
-}
-
-// It sets an welcome message using student's name received
-// Mainly used in Perugluglu's own projects but left here for future reference
-function setWelcomeMessage() {
-    // If it's an user's first time accessing the course...
-    if(scormEntry === 'ab-initio') {
-    } 
-    // ...and if it isn't
-    else {
-    }
-}
-
-// Saves current course status
-function unloadHandler() {
-    if(!unloaded) {
-        saveSuspendData();
-        scorm.save();
-        scorm.quit();
-        unloaded = true;
-    }
 }
 
 // Calls save function when the user leaves the page
-window.onbeforeunload = unloadHandler;
-window.onunload = unloadHandler;
+window.onbeforeunload = scormFunctions.unloadHandler;
+window.onunload = scormFunctions.unloadHandler;
+
+$(document).ready(function(){
+    scormFunctions.scormInit();
+});

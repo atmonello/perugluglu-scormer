@@ -12,19 +12,21 @@
 
 var counter; // Used to track user clicks
 
-$(document).ready(function(){
-    scormInit();
-});
-
-
 function init() {
+    // Sets counter equal to total clicks on data.js
+    counter = data.totalClicks;
+    
     // Sets counter text
     $('.counter p').html('Total: ' + counter)
 
     // Controls click on the button
     $(document).on('click','.button', function(){
         counter++;
+
         data.totalClicks = counter;
-        $('.counter p').html('Total: ' + counter)
+
+        $('.counter p').html('Total: ' + counter);
+
+        if (data.totalClicks >= 50) scormFunctions.setComplete();
     });
 }
