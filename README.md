@@ -5,7 +5,7 @@ São Paulo, Brasil
 
 ### Author
 André Monello
-andre.monello [at] perugluglu.net
+andre.monello [at] gmail.com
 #### Disclaimer
 I am by no means endorsed by Rustici Software, Pipwerks or any other company related to SCORM, and also no expert, even on HTML, JS or SCORM. Please feel free to use this as a base and expand it according to your own needs!
 
